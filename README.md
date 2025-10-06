@@ -1,8 +1,10 @@
 🚀 Как Запустить
+
 Клонируйте репозиторий:
 
 git clone https://github.com/ВАШ_ЛОГИН/simple-caesar-console-key.git
 cd simple-caesar-console-key
+
 (Замените ВАШ_ЛОГИН/simple-caesar-console-key.git на актуальный URL вашего репозитория)
 
 Откройте проект в IntelliJ IDEA.
