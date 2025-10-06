@@ -1,0 +1,9 @@
+# Bytecode
+*.class
+
+# IDE files (IntelliJ IDEA)
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
