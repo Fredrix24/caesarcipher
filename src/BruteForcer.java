@@ -1,5 +1,3 @@
-// ***** BruteForcer.java *****
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -12,23 +10,18 @@ import java.util.Vector;
 public class BruteForcer {
 
     private CaesarCipherLogic cipherLogic;
-
-    // Частотности (сокращены для простоты)
     private static final Map<Character, Double> RUSSIAN_LETTER_FREQUENCIES = new HashMap<>();
-
     static {
         RUSSIAN_LETTER_FREQUENCIES.put('о', 0.1098);
         RUSSIAN_LETTER_FREQUENCIES.put('е', 0.0834);
         RUSSIAN_LETTER_FREQUENCIES.put('а', 0.0799);
-        // ...
     }
-    private static final Map<Character, Double> ENGLISH_LETTER_FREQUENCIES = new HashMap<>();
 
+    private static final Map<Character, Double> ENGLISH_LETTER_FREQUENCIES = new HashMap<>();
     static {
         ENGLISH_LETTER_FREQUENCIES.put('e', 0.1270);
         ENGLISH_LETTER_FREQUENCIES.put('t', 0.0906);
         ENGLISH_LETTER_FREQUENCIES.put('a', 0.0817);
-        // ...
     }
 
     public BruteForcer(CaesarCipherLogic cipherLogic) {
@@ -44,8 +37,7 @@ public class BruteForcer {
             double score = calculateFrequencyScore(decryptedText, alphabet, caseSensitive);
             results.add(new AnalysisResult(shift, decryptedText, score));
         }
-
-        results.sort(Comparator.comparingDouble(AnalysisResult::getScore).reversed()); // Лучший результат сверху
+        results.sort(Comparator.comparingDouble(AnalysisResult::getScore).reversed());
         return results;
     }
 
@@ -62,7 +54,6 @@ public class BruteForcer {
                 letterCount++;
             }
         }
-
         if (letterCount == 0) return 0.0;
         double score = 0.0;
         for (Map.Entry<Character, Double> entry : targetFrequencies.entrySet()) {
@@ -74,25 +65,20 @@ public class BruteForcer {
     }
 
     public static class AnalysisResult {
-
         private int shift;
         private String decryptedText;
         private double score;
-
         public AnalysisResult(int shift, String decryptedText, double score) {
             this.shift = shift;
             this.decryptedText = decryptedText;
             this.score = score;
         }
-
         public int getShift() {
             return shift;
         }
-
         public double getScore() {
             return score;
         }
-
         public String getDecryptedText() {
             return decryptedText;
         }

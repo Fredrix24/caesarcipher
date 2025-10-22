@@ -1,5 +1,3 @@
-// Main.java
-
 import javax.swing.SwingUtilities;
 
 public class Main {

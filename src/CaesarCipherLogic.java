@@ -1,5 +1,3 @@
-// ***** CaesarCipherLogic.java *****
-
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,21 +11,16 @@ public class CaesarCipherLogic {
         StringBuilder result = new StringBuilder();
         String currentAlphabet = (alphabet.equalsIgnoreCase("ru")) ? russianAlphabet : englishAlphabet;
         String textToProcess = (caseSensitive) ? text : text.toLowerCase();
-        int alphabetLength = currentAlphabet.length(); // Получаем длину алфавита один раз
+        int alphabetLength = currentAlphabet.length();
 
         for (char character : textToProcess.toCharArray()) {
             int index = currentAlphabet.indexOf(character);
 
             if (index != -1) {
-                // Символ найден в алфавите, выполняем сдвиг
-                // Корректный расчет сдвига, учитывающий отрицательные значения и длину алфавита
                 int shiftedIndex = (index + shift % alphabetLength + alphabetLength) % alphabetLength;
-
                 char shiftedChar = currentAlphabet.charAt(shiftedIndex);
                 result.append(shiftedChar);
             } else {
-                // Символ не найден в алфавите (например, ',', '!', пробел, цифра)
-                // Просто добавляем его без изменений
                 result.append(character);
             }
         }

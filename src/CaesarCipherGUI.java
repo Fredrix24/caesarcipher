@@ -1,5 +1,3 @@
-// ***** CaesarCipherGUI.java *****
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -18,13 +16,13 @@ public class CaesarCipherGUI extends JFrame {
     private JTextField outputFilePathField;
 
     public CaesarCipherGUI() {
-        super("Шифр Цезаря (с файлами)");
+        super("Шифр Цезаря");
         this.cipherLogic = new CaesarCipherLogic();
         initComponents();
         layoutComponents();
         addListeners();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(650, 180); // Новый, уменьшенный размер окна
+        setSize(650, 180);
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -44,40 +42,34 @@ public class CaesarCipherGUI extends JFrame {
     }
 
     private void layoutComponents() {
-        JPanel mainPanel = new JPanel(new BorderLayout(5, 5)); // Отступы по краям
+        JPanel mainPanel = new JPanel(new BorderLayout(5, 5));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        // === 1. Панель Настроек (сверху) ===
         JPanel settingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
         settingsPanel.add(new JLabel("Сдвиг:"));
         settingsPanel.add(shiftField);
         settingsPanel.add(alphabetComboBox);
 
-        // === 2. Панель Путей (слева) ===
-        JPanel pathPanel = new JPanel(new GridLayout(2, 1, 2, 2)); // 2 строки, 1 столбец, минимальные отступы
+        JPanel pathPanel = new JPanel(new GridLayout(2, 1, 2, 2));
         pathPanel.add(new JLabel("Входной файл:"));
         pathPanel.add(new JLabel("Выходной файл:"));
 
-        // === 3. Панель Полей ввода (справа) ===
-        JPanel textFieldPanel = new JPanel(new GridLayout(2, 1, 2, 2)); // Аналогично 2 строки, 1 столбец
+        JPanel textFieldPanel = new JPanel(new GridLayout(2, 1, 2, 2));
         textFieldPanel.add(inputFilePathField);
         textFieldPanel.add(outputFilePathField);
 
-        // === 4. Объединяем Пути и Поля в одну панель (в центре) ===
         JPanel filesPanel = new JPanel(new BorderLayout(5, 5));
-        filesPanel.add(pathPanel, BorderLayout.WEST);   // Метки слева
-        filesPanel.add(textFieldPanel, BorderLayout.CENTER); // Поля ввода справа
+        filesPanel.add(pathPanel, BorderLayout.WEST);
+        filesPanel.add(textFieldPanel, BorderLayout.CENTER);
 
-        // === 5. Панель Кнопок (снизу) ===
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
         buttonPanel.add(encryptButton);
         buttonPanel.add(decryptButton);
         buttonPanel.add(bruteForceButton);
 
-        // === Общая компоновка ===
-        mainPanel.add(settingsPanel, BorderLayout.NORTH);  // Настройки сверху
-        mainPanel.add(filesPanel, BorderLayout.CENTER);     // Файлы в центре (слева метки, справа поля)
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);    // Кнопки снизу
+        mainPanel.add(settingsPanel, BorderLayout.NORTH);
+        mainPanel.add(filesPanel, BorderLayout.CENTER);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
     }
@@ -138,22 +130,18 @@ public class CaesarCipherGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Пожалуйста, введите путь к входному файлу для анализа.", "Ошибка", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-
         String inputText = cipherLogic.readFile(inputFilePath);
         if (inputText == null) {
             JOptionPane.showMessageDialog(this, "Ошибка при чтении файла: " + inputFilePath, "Ошибка", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         String detectedAlphabet = cipherLogic.detectAlphabet(inputText);
         if (detectedAlphabet == null) {
             JOptionPane.showMessageDialog(this, "Не найдено алфавитных символов в файле.", "Ошибка", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         String selectedAlphabetFromGUI = alphabetComboBox.getSelectedItem().toString().equalsIgnoreCase("Русский") ? "ru" : "en";
         String alphabetToUse = selectedAlphabetFromGUI;
-
         if (detectedAlphabet.equals("mixed")) {
             JOptionPane.showMessageDialog(this, "Обнаружены символы разных алфавитов. Результат анализа может быть неточен. Выбранный в GUI алфавит: " + (selectedAlphabetFromGUI.equals("ru") ? "Русский" : "Английский"), "Предупреждение", JOptionPane.WARNING_MESSAGE);
         } else if (!detectedAlphabet.equals(selectedAlphabetFromGUI)) {
@@ -162,7 +150,6 @@ public class CaesarCipherGUI extends JFrame {
                     "Выбор алфавита",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
-
             if (choice == JOptionPane.YES_OPTION) {
                 alphabetToUse = detectedAlphabet;
                 alphabetComboBox.setSelectedItem(detectedAlphabet.equalsIgnoreCase("ru") ? "Русский" : "Английский");
@@ -183,7 +170,6 @@ public class CaesarCipherGUI extends JFrame {
     private void showCombinedResults(List<BruteForcer.AnalysisResult> results) {
         SwingUtilities.invokeLater(() -> {
             JFrame resultFrame = new JFrame("Результаты Брутфорса и Анализа");
-            // Убираем resultFrame.setSize(800, 600); - будем использовать pack()
             resultFrame.setLocationRelativeTo(this);
             resultFrame.setLayout(new BorderLayout());
 
@@ -197,7 +183,6 @@ public class CaesarCipherGUI extends JFrame {
             for (BruteForcer.AnalysisResult result : results) {
                 Vector<Object> row = new Vector<>();
                 row.add(result.getShift());
-                // Ограничиваем длину текста для таблицы, чтобы не было слишком широких строк
                 String decryptedText = result.getDecryptedText();
                 if (decryptedText.length() > 60) {
                     decryptedText = decryptedText.substring(0, 60) + "...";
@@ -206,24 +191,16 @@ public class CaesarCipherGUI extends JFrame {
                 row.add(String.format("%.4f", result.getScore()));
                 data.add(row);
             }
-
             JTable resultTable = new JTable(data, columnNames);
 
-            // *** КЛЮЧЕВОЕ ИЗМЕНЕНИЕ 1: Режим автоматической подгонки ширины ***
             resultTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-            // resultTable.getColumnModel().getColumn(1).setPreferredWidth(500); // Это теперь не нужно
 
-            // Теперь мы можем установить предпочтительную ширину для контейнера с прокруткой
             JScrollPane scrollPane = new JScrollPane(resultTable);
 
-            // Установим разумный минимальный размер для окна
             resultTable.setPreferredScrollableViewportSize(new Dimension(700, 400));
-
 
             resultFrame.add(scrollPane, BorderLayout.CENTER);
 
-            // *** КЛЮЧЕВОЕ ИЗМЕНЕНИЕ 2: Использование pack() ***
-            // pack() подгоняет окно под предпочтительный размер его содержимого.
             resultFrame.pack();
 
             resultFrame.setVisible(true);
