@@ -55,8 +55,9 @@ jobs:
           if ($sonarScannerPath) {
             Write-Host "Файл sonar-scanner.bat найден по пути: $sonarScannerPath"
 
-            # Запускаем SonarScanner, передавая параметры корректно
+            # Запускаем SonarScanner с отладкой (-X)
             & $sonarScannerPath `
+              -X ` # <--- ДОБАВЛЯЕМ ОТЛАДОЧНЫЙ РЕЖИМ
               -D "sonar.projectKey=Fredrix24_caesarcipher" `
               -D "sonar.organization=fredrix24" `
               -D "sonar.projectName=Caesar Cipher Project" `
