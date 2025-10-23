@@ -61,7 +61,7 @@ jobs:
               "-D", "sonar.projectKey=Fredrix24_caesarcipher"
               "-D", "sonar.organization=fredrix24"
               "-D", "sonar.projectName=Caesar Cipher Project"
-              "-D", "sonar.sources=."
+              "-D", "sonar.sources=src" # УКАЗЫВАЕМ ЯВНО "src"
               "-D", "sonar.sourceEncoding=UTF-8"
               "-D", "sonar.host.url=https://sonarcloud.io"
               "-D", "sonar.login=${{ secrets.SONAR_TOKEN }}"
