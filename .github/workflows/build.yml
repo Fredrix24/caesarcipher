@@ -23,12 +23,21 @@ jobs:
           # 2. Скачиваем LINUX-ВЕРСИЮ (важно!)
           wget -O sonar-scanner-cli.zip "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip"
 
-          # 3. Разархивируем
-          unzip sonar-scanner-cli.zip
+          # 3. Разархивируем в текущую директорию
+          unzip sonar-scanner-cli.zip -d .
 
-          # 4. Переименовываем и добавляем в PATH
-          mv sonar-scanner-cli-5.0.1.3006-linux sonar-scanner
-          echo "$PWD/sonar-scanner" >> $GITHUB_PATH
+          # 4. Определяем имя папки (динамически!)
+          SONAR_SCANNER_DIR=$(find . -maxdepth 1 -type d -name "sonar-scanner-cli-*" -print -quit | head -1 | xargs basename)
+          
+          # 5. Переименовываем, если папка найдена
+          if [ -n "$SONAR_SCANNER_DIR" ]; then
+            mv "$SONAR_SCANNER_DIR" sonar-scanner
+            # 6. Добавляем SonarScanner в PATH
+            echo "$PWD/sonar-scanner" >> $GITHUB_PATH
+          else
+            echo "Ошибка: Не удалось найти папку с SonarScanner после разархивирования!" >&2
+            exit 1 # Завершаем выполнение с ошибкой
+          fi
 
       - name: Run SonarScanner
         run: |
