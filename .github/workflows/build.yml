@@ -5,6 +5,7 @@ on:
       - master
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   sonarqube:
     name: SonarQube
@@ -13,7 +14,26 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Download SonarScanner
+        run: |
+          # Скачиваем SonarScanner
+          Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-windows.zip" -OutFile "sonar-scanner-cli.zip"
+          # Разархивируем
+          Expand-Archive -Path "sonar-scanner-cli.zip" -DestinationPath "."
+          # Переименовываем папку
+          Rename-Item "sonar-scanner-cli-5.0.1.3006-windows" "sonar-scanner"
+          # Добавляем SonarScanner в PATH
+          $env:PATH = "$pwd\sonar-scanner;$env:PATH"
+
+      - name: Run SonarScanner
+        run: |
+          # Запускаем SonarScanner
+          sonar-scanner `
+            -Dsonar.projectKey=Fredrix24_caesarcipher `
+            -Dsonar.organization=fredrix24 `
+            -Dsonar.projectName="Caesar Cipher Project" `
+            -Dsonar.sources=. `
+            -Dsonar.sourceEncoding=UTF-8 `
+            -Dsonar.host.url=https://sonarcloud.io `
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
