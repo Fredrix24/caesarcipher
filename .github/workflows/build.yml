@@ -48,16 +48,15 @@ jobs:
 
       - name: Run SonarScanner
         run: |
-          # Вызываем исполняемый файл напрямую (он должен быть в PATH, но вызываем явно)
-          # В PowerShell используем ` ` для переноса строк
+          # Ищем файл sonar-scanner.bat во всех подпапках папки sonar-scanner
+          $sonarScannerPath = Get-ChildItem -Path ".\sonar-scanner" -Recurse -Filter "sonar-scanner.bat" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
 
-          # Пытаемся запустить сканер, предполагая стандартную структуру
-          $scannerPath = ".\sonar-scanner\sonar-scanner-cli-5.0.1.3006-windows\bin\sonar-scanner.bat"
+          # Если файл найден
+          if ($sonarScannerPath) {
+            Write-Host "Файл sonar-scanner.bat найден по пути: $sonarScannerPath"
 
-          # Проверяем, существует ли файл
-          if (Test-Path -Path $scannerPath) {
-            Write-Host "Файл sonar-scanner.bat найден по пути: $scannerPath"
-            & $scannerPath `
+            # Запускаем SonarScanner
+            & $sonarScannerPath `
               -Dsonar.projectKey=Fredrix24_caesarcipher `
               -Dsonar.organization=fredrix24 `
               -Dsonar.projectName="Caesar Cipher Project" `
@@ -66,6 +65,6 @@ jobs:
               -Dsonar.host.url=https://sonarcloud.io `
               -Dsonar.login=${{ secrets.SONAR_TOKEN }}
           } else {
-            Write-Host "Ошибка: Файл sonar-scanner.bat НЕ найден по пути: $scannerPath"
+            Write-Host "Ошибка: Файл sonar-scanner.bat НЕ найден ни в одной подпапке папки sonar-scanner"
             exit 1
           }
