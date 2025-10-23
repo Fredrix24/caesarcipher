@@ -15,15 +15,18 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Download SonarScanner
+      - name: Install unzip and Download SonarScanner
         run: |
-          # 1. Скачиваем
+          # 1. Устанавливаем unzip, если он не установлен по умолчанию
+          sudo apt-get update && sudo apt-get install -y unzip
+          
+          # 2. Скачиваем LINUX-ВЕРСИЮ (важно!)
           wget -O sonar-scanner-cli.zip "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip"
-
-          # 2. Разархивируем
+          
+          # 3. Разархивируем
           unzip sonar-scanner-cli.zip
-
-          # 3. Переименовываем и добавляем в PATH
+          
+          # 4. Переименовываем и добавляем в PATH
           mv sonar-scanner-cli-5.0.1.3006-linux sonar-scanner
           echo "$PWD/sonar-scanner" >> $GITHUB_PATH
 
