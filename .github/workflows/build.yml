@@ -1,4 +1,5 @@
-name: Build
+name: SonarQube Analysis
+
 on:
   push:
     branches:
@@ -9,44 +10,35 @@ on:
 jobs:
   sonarqube:
     name: SonarQube
-    runs-on: ubuntu-latest
+    runs-on: windows-latest # ИСПОЛЬЗУЕМ WINDOWS
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Install unzip and Download SonarScanner
+      - name: Install and Download SonarScanner
         run: |
-          # 1. Устанавливаем unzip
-          sudo apt-get update && sudo apt-get install -y unzip
+          # 1. Скачиваем SonarScanner CLI
+          Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-windows.zip" -OutFile "sonar-scanner-cli.zip"
 
-          # 2. Скачиваем LINUX-ВЕРСИЮ (важно!)
-          wget -O sonar-scanner-cli.zip "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip"
+          # 2. Создаём директорию sonar-scanner
+          New-Item -ItemType Directory -Name sonar-scanner
 
-          # 3. Разархивируем в текущую директорию
-          unzip sonar-scanner-cli.zip -d .
+          # 3. Разархивируем в созданную директорию
+          Expand-Archive -Path "sonar-scanner-cli.zip" -DestinationPath "sonar-scanner"
 
-          # 4. Определяем имя папки (динамически!)
-          SONAR_SCANNER_DIR=$(find . -maxdepth 1 -type d -name "sonar-scanner-cli-*" -print -quit | head -1 | xargs basename)
-          
-          # 5. Переименовываем, если папка найдена
-          if [ -n "$SONAR_SCANNER_DIR" ]; then
-            mv "$SONAR_SCANNER_DIR" sonar-scanner
-            # 6. Добавляем SonarScanner в PATH
-            echo "$PWD/sonar-scanner" >> $GITHUB_PATH
-          else
-            echo "Ошибка: Не удалось найти папку с SonarScanner после разархивирования!" >&2
-            exit 1 # Завершаем выполнение с ошибкой
-          fi
+          # 4. Добавляем sonar-scanner в PATH
+          $env:PATH = "$pwd\sonar-scanner;$env:PATH"
 
       - name: Run SonarScanner
         run: |
           # Запускаем SonarScanner
-          sonar-scanner \
-            -Dsonar.projectKey=Fredrix24_caesarcipher \
-            -Dsonar.organization=fredrix24 \
-            -Dsonar.projectName="Caesar Cipher Project" \
-            -Dsonar.sources=. \
-            -Dsonar.sourceEncoding=UTF-8 \
-            -Dsonar.host.url=https://sonarcloud.io \
+          sonar-scanner `
+            -Dsonar.projectKey=Fredrix24_caesarcipher `
+            -Dsonar.organization=fredrix24 `
+            -Dsonar.projectName="Caesar Cipher Project" `
+            -Dsonar.sources=. `
+            -Dsonar.sourceEncoding=UTF-8 `
+            -Dsonar.host.url=https://sonarcloud.io `
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
