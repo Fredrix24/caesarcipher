@@ -64,17 +64,21 @@ jobs:
               "Dsonar.sourceEncoding" = "UTF-8"
               "Dsonar.host.url" = "https://sonarcloud.io"
               "Dsonar.login" = "${{ secrets.SONAR_TOKEN }}"
-              "-X" = $true # Включаем отладку
+              # "-X" = $true # Включаем отладку, но передадим как отдельный аргумент для простоты
             }
 
             # Строим строку параметров для вызова sonar-scanner
-            $paramString = ""
+            $paramList = @() # Массив для хранения параметров
             foreach ($param in $sonarScannerParams.GetEnumerator()) {
-              $paramString += "-${param.Key} `" + " " + $param.Value + " `"
+              # Добавляем каждый параметр как отдельный элемент массива
+              $paramList += "-${param.Key} `"$($param.Value)`""
             }
 
+            # Добавляем параметр отладки (-X) отдельно
+            $paramList += "-X"
+
             # Запускаем SonarScanner с параметрами
-            & $sonarScannerPath $paramString
+            & $sonarScannerPath $paramList
           } else {
             Write-Host "Ошибка: Файл sonar-scanner.bat НЕ найден ни в одной подпапке папки sonar-scanner"
             exit 1
