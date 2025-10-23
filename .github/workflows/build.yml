@@ -9,7 +9,7 @@ on:
 jobs:
   sonarqube:
     name: SonarQube
-    runs-on: windows-latest
+    runs-on: ubuntu-latest # <---- ИСПОЛЬЗУЕМ LINUX
     steps:
       - uses: actions/checkout@v4
         with:
@@ -17,30 +17,24 @@ jobs:
 
       - name: Download SonarScanner
         run: |
-          # 1. Скачиваем SonarScanner CLI (убедитесь, что URL актуален)
-          Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-windows.zip" -OutFile "sonar-scanner-cli.zip"
+          # 1. Скачиваем
+          wget -O sonar-scanner-cli.zip "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip"
 
-          # 2. Разархивируем (создаст папку с именем sonar-scanner-cli-5.0.1.3006-windows)
-          Expand-Archive -Path "sonar-scanner-cli.zip" -DestinationPath "."
+          # 2. Разархивируем
+          unzip sonar-scanner-cli.zip
 
-          # 3. Проверяем, что папка существует, прежде чем переименовывать
-          $unzippedDir = "sonar-scanner-cli-5.0.1.3006-windows"
-          if (Test-Path $unzippedDir) {
-              Rename-Item $unzippedDir "sonar-scanner"
-              # 4. Добавляем SonarScanner в PATH
-              $env:PATH = "$pwd\sonar-scanner;$env:PATH"
-          } else {
-              Write-Error "Ошибка: Папка с разархивированным SonarScanner не найдена!"
-          }
+          # 3. Переименовываем и добавляем в PATH
+          mv sonar-scanner-cli-5.0.1.3006-linux sonar-scanner
+          echo "$PWD/sonar-scanner" >> $GITHUB_PATH
 
       - name: Run SonarScanner
         run: |
           # Запускаем SonarScanner
-          sonar-scanner `
-            -Dsonar.projectKey=Fredrix24_caesarcipher `
-            -Dsonar.organization=fredrix24 `
-            -Dsonar.projectName="Caesar Cipher Project" `
-            -Dsonar.sources=. `
-            -Dsonar.sourceEncoding=UTF-8 `
-            -Dsonar.host.url=https://sonarcloud.io `
+          sonar-scanner \
+            -Dsonar.projectKey=Fredrix24_caesarcipher \
+            -Dsonar.organization=fredrix24 \
+            -Dsonar.projectName="Caesar Cipher Project" \
+            -Dsonar.sources=. \
+            -Dsonar.sourceEncoding=UTF-8 \
+            -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
