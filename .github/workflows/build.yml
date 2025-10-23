@@ -46,15 +46,6 @@ jobs:
           Write-Host "Содержимое папки sonar-scanner:"
           Get-ChildItem -Path "sonar-scanner"
 
-          # 3. Создаём директорию sonar-scanner
-          New-Item -ItemType Directory -Name sonar-scanner
-
-          # 4. Разархивируем в созданную директорию с помощью 7-Zip
-          & "C:\Program Files\7-Zip\7z.exe" x "sonar-scanner-cli.zip" -o"sonar-scanner" -y
-
-          # 5. Выводим список файлов и папок (ОЧЕНЬ ВАЖНО ДЛЯ ОТЛАДКИ)
-          Get-ChildItem -Path "sonar-scanner"
-
       - name: Run SonarScanner
         run: |
           # Вызываем исполняемый файл напрямую (он должен быть в PATH, но вызываем явно)
