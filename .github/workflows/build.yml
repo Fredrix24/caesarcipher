@@ -5,39 +5,15 @@ on:
       - master
   pull_request:
     types: [opened, synchronize, reopened]
-
 jobs:
   sonarqube:
     name: SonarQube
-    runs-on: ubuntu-latest # <---- ИСПОЛЬЗУЕМ LINUX
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-
-      - name: Install unzip and Download SonarScanner
-        run: |
-          # 1. Устанавливаем unzip, если он не установлен по умолчанию
-          sudo apt-get update && sudo apt-get install -y unzip
-          
-          # 2. Скачиваем LINUX-ВЕРСИЮ (важно!)
-          wget -O sonar-scanner-cli.zip "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip"
-          
-          # 3. Разархивируем
-          unzip sonar-scanner-cli.zip
-          
-          # 4. Переименовываем и добавляем в PATH
-          mv sonar-scanner-cli-5.0.1.3006-linux sonar-scanner
-          echo "$PWD/sonar-scanner" >> $GITHUB_PATH
-
-      - name: Run SonarScanner
-        run: |
-          # Запускаем SonarScanner
-          sonar-scanner \
-            -Dsonar.projectKey=Fredrix24_caesarcipher \
-            -Dsonar.organization=fredrix24 \
-            -Dsonar.projectName="Caesar Cipher Project" \
-            -Dsonar.sources=. \
-            -Dsonar.sourceEncoding=UTF-8 \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
