@@ -33,6 +33,20 @@ jobs:
           }
 
           # 3. Создаём директорию sonar-scanner
+          New-Item -ItemType Directory -Name sonar-scanner -ErrorAction SilentlyContinue
+
+          # 4. Разархивируем в созданную директорию с помощью 7-Zip
+          & "C:\Program Files\7-Zip\7z.exe" x "sonar-scanner-cli.zip" -o"sonar-scanner" -y
+
+          # 5. Выводим список файлов и папок В КОРНЕВОЙ ДИРЕКТОРИИ
+          Write-Host "Содержимое корневой директории:"
+          Get-ChildItem -Path .
+
+          # 6. Выводим список файлов и папок В ПАПКЕ sonar-scanner
+          Write-Host "Содержимое папки sonar-scanner:"
+          Get-ChildItem -Path "sonar-scanner"
+
+          # 3. Создаём директорию sonar-scanner
           New-Item -ItemType Directory -Name sonar-scanner
 
           # 4. Разархивируем в созданную директорию с помощью 7-Zip
@@ -45,11 +59,22 @@ jobs:
         run: |
           # Вызываем исполняемый файл напрямую (он должен быть в PATH, но вызываем явно)
           # В PowerShell используем ` ` для переноса строк
-          & ".\sonar-scanner\sonar-scanner-cli-5.0.1.3006-windows\bin\sonar-scanner.bat" `
-            -Dsonar.projectKey=Fredrix24_caesarcipher `
-            -Dsonar.organization=fredrix24 `
-            -Dsonar.projectName="Caesar Cipher Project" `
-            -Dsonar.sources=. `
-            -Dsonar.sourceEncoding=UTF-8 `
-            -Dsonar.host.url=https://sonarcloud.io `
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+          # Пытаемся запустить сканер, предполагая стандартную структуру
+          $scannerPath = ".\sonar-scanner\sonar-scanner-cli-5.0.1.3006-windows\bin\sonar-scanner.bat"
+
+          # Проверяем, существует ли файл
+          if (Test-Path -Path $scannerPath) {
+            Write-Host "Файл sonar-scanner.bat найден по пути: $scannerPath"
+            & $scannerPath `
+              -Dsonar.projectKey=Fredrix24_caesarcipher `
+              -Dsonar.organization=fredrix24 `
+              -Dsonar.projectName="Caesar Cipher Project" `
+              -Dsonar.sources=. `
+              -Dsonar.sourceEncoding=UTF-8 `
+              -Dsonar.host.url=https://sonarcloud.io `
+              -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          } else {
+            Write-Host "Ошибка: Файл sonar-scanner.bat НЕ найден по пути: $scannerPath"
+            exit 1
+          }
