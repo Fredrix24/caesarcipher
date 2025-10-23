@@ -55,30 +55,20 @@ jobs:
           if ($sonarScannerPath) {
             Write-Host "Файл sonar-scanner.bat найден по пути: $sonarScannerPath"
 
-            # Создаем хэш-таблицу с параметрами
-            $sonarScannerParams = @{
-              "Dsonar.projectKey" = "Fredrix24_caesarcipher"
-              "Dsonar.organization" = "fredrix24"
-              "Dsonar.projectName" = "Caesar Cipher Project"
-              "Dsonar.sources" = "."
-              "Dsonar.sourceEncoding" = "UTF-8"
-              "Dsonar.host.url" = "https://sonarcloud.io"
-              "Dsonar.login" = "${{ secrets.SONAR_TOKEN }}"
-              # "-X" = $true # Включаем отладку, но передадим как отдельный аргумент для простоты
-            }
-
-            # Строим строку параметров для вызова sonar-scanner
-            $paramList = @() # Массив для хранения параметров
-            foreach ($param in $sonarScannerParams.GetEnumerator()) {
-              # Добавляем каждый параметр как отдельный элемент массива
-              $paramList += "-${param.Key} `"$($param.Value)`""
-            }
-
-            # Добавляем параметр отладки (-X) отдельно
-            $paramList += "-X"
+            # Формируем список аргументов для sonar-scanner
+            $arguments = @(
+              "-X" # Режим отладки
+              "-D", "sonar.projectKey=Fredrix24_caesarcipher"
+              "-D", "sonar.organization=fredrix24"
+              "-D", "sonar.projectName=Caesar Cipher Project"
+              "-D", "sonar.sources=."
+              "-D", "sonar.sourceEncoding=UTF-8"
+              "-D", "sonar.host.url=https://sonarcloud.io"
+              "-D", "sonar.login=${{ secrets.SONAR_TOKEN }}"
+            )
 
             # Запускаем SonarScanner с параметрами
-            & $sonarScannerPath $paramList
+            & $sonarScannerPath $arguments
           } else {
             Write-Host "Ошибка: Файл sonar-scanner.bat НЕ найден ни в одной подпапке папки sonar-scanner"
             exit 1
