@@ -17,14 +17,21 @@ jobs:
 
       - name: Download SonarScanner
         run: |
-          # Скачиваем SonarScanner
+          # 1. Скачиваем SonarScanner CLI (убедитесь, что URL актуален)
           Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-windows.zip" -OutFile "sonar-scanner-cli.zip"
-          # Разархивируем
+
+          # 2. Разархивируем (создаст папку с именем sonar-scanner-cli-5.0.1.3006-windows)
           Expand-Archive -Path "sonar-scanner-cli.zip" -DestinationPath "."
-          # Переименовываем папку
-          Rename-Item "sonar-scanner-cli-5.0.1.3006-windows" "sonar-scanner"
-          # Добавляем SonarScanner в PATH
-          $env:PATH = "$pwd\sonar-scanner;$env:PATH"
+
+          # 3. Проверяем, что папка существует, прежде чем переименовывать
+          $unzippedDir = "sonar-scanner-cli-5.0.1.3006-windows"
+          if (Test-Path $unzippedDir) {
+              Rename-Item $unzippedDir "sonar-scanner"
+              # 4. Добавляем SonarScanner в PATH
+              $env:PATH = "$pwd\sonar-scanner;$env:PATH"
+          } else {
+              Write-Error "Ошибка: Папка с разархивированным SonarScanner не найдена!"
+          }
 
       - name: Run SonarScanner
         run: |
