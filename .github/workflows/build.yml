@@ -22,24 +22,30 @@ jobs:
           # 1. Скачиваем SonarScanner CLI
           Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-windows.zip" -OutFile "sonar-scanner-cli.zip"
 
-          # 2. Создаём директорию sonar-scanner
+          # 2. Устанавливаем 7-Zip (если он не установлен)
+          if (-not (Get-Command 7z -ErrorAction SilentlyContinue)) {
+            Write-Host "7-Zip не установлен. Устанавливаем..."
+            & {
+              Invoke-WebRequest -Uri "https://www.7-zip.org/a/7z2301-x64.exe" -OutFile "7z.exe"
+              .\7z.exe /S
+              Remove-Item "7z.exe"
+            }
+          }
+
+          # 3. Создаём директорию sonar-scanner
           New-Item -ItemType Directory -Name sonar-scanner
 
-          # 3. Разархивируем в созданную директорию
-          Expand-Archive -Path "sonar-scanner-cli.zip" -DestinationPath "sonar-scanner"
+          # 4. Разархивируем в созданную директорию с помощью 7-Zip
+          & "C:\Program Files\7-Zip\7z.exe" x "sonar-scanner-cli.zip" -o"sonar-scanner" -y
 
-          # 4. Выводим список файлов и папок (ОЧЕНЬ ВАЖНО ДЛЯ ОТЛАДКИ)
-          Get-ChildItem -Path .
-
-          # 5. Добавляем sonar-scanner в PATH (на всякий случай)
-          $env:PATH = "$pwd\sonar-scanner;$env:PATH"
+          # 5. Выводим список файлов и папок (ОЧЕНЬ ВАЖНО ДЛЯ ОТЛАДКИ)
+          Get-ChildItem -Path "sonar-scanner"
 
       - name: Run SonarScanner
         run: |
           # Вызываем исполняемый файл напрямую (он должен быть в PATH, но вызываем явно)
           # В PowerShell используем ` ` для переноса строк
-          # ВНИМАНИЕ: ВОЗМОЖНО, ПУТЬ НУЖНО БУДЕТ СКОРРЕКТИРОВАТЬ!
-          & ".\sonar-scanner\bin\sonar-scanner.bat" `
+          & ".\sonar-scanner\sonar-scanner-cli-5.0.1.3006-windows\bin\sonar-scanner.bat" `
             -Dsonar.projectKey=Fredrix24_caesarcipher `
             -Dsonar.organization=fredrix24 `
             -Dsonar.projectName="Caesar Cipher Project" `
