@@ -1,4 +1,4 @@
-name: Build & SonarQube Analysis (Java with Maven)
+name: SonarQube Analysis (Java with Maven)
 
 on:
   push:
@@ -17,15 +17,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 1. Настройка JDK
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # 2. Сборка и анализ с помощью Maven
-      - name: Build and SonarQube Analysis with Maven
+      - name: SonarQube Analysis with Maven
         run: mvn clean verify sonar:sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
