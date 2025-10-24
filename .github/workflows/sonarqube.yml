@@ -29,3 +29,5 @@ jobs:
         run: mvn clean verify sonar:sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          # Указываем, что цель - SonarCloud, а не localhost
+          SONAR_HOST_URL: https://sonarcloud.io 
