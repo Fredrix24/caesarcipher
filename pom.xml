@@ -13,7 +13,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Добавляем sonar.organization сюда -->
-        <sonar.organization>Fredrix24</sonar.organization>
+        <sonar.organization>fredrix24</sonar.organization>
     </properties>
 
     <dependencies>
