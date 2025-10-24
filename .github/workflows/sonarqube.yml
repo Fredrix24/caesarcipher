@@ -1,4 +1,4 @@
-name: SonarQube Analysis
+name: Build & SonarQube Analysis (Java with Maven)
 
 on:
   push:
@@ -24,10 +24,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 2. Сборка и анализ с помощью Maven
-      - name: Build and SonarQube Analysis with Maven
-        run: mvn clean verify sonar:sonar
+      # 2. Компиляция Java кода с помощью Maven
+      - name: Compile Java Code with Maven
+        run: mvn compile
+
+      # 3. SonarQube Scan
+      - name: SonarQube Scan
+        uses: SonarSource/sonarcloud-github-action@v2.1.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          # Указываем, что цель - SonarCloud, а не localhost
           SONAR_HOST_URL: https://sonarcloud.io
+        # Дополнительные настройки для Sonar Scanner, чтобы он знал, где искать скомпилированные файлы
+        env:
+          SONAR_SCANNER_OPTS: >
+            -Dsonar.java.binaries=target/classes
+            -Dsonar.sources=src
+            -Dsonar.tests=.

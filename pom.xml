@@ -26,6 +26,16 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>3.9.1.2184</version> <!-- Используйте последнюю стабильную версию -->
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version> <!-- Используйте актуальную версию -->
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <outputDirectory>target/classes</outputDirectory> <!-- Указываем, куда класть скомпилированные файлы -->
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
