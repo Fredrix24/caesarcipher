@@ -34,8 +34,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
-        # Дополнительные настройки для Sonar Scanner, чтобы он знал, где искать скомпилированные файлы
-        env:
           SONAR_SCANNER_OPTS: >
             -Dsonar.java.binaries=target/classes
             -Dsonar.sources=src
