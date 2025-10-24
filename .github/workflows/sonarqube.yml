@@ -1,4 +1,4 @@
-name: Build & SonarQube Analysis (Java)
+name: SonarQube Analysis
 
 on:
   push:
@@ -24,14 +24,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-          # 2. Сборка проекта (если требуется)
-          # Если у вас Maven или Gradle, используйте соответствующие шаги
-          # Пример для Maven:
-          #- name: Build with Maven
-          #  run: mvn clean install
-
-      # 3. SonarQube Scan
-      - name: SonarQube Scan
-        uses: SonarSource/sonarcloud-github-action@v2.1.1
+      # 2. Сборка и анализ с помощью Maven
+      - name: Build and SonarQube Analysis with Maven
+        run: mvn clean verify sonar:sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
