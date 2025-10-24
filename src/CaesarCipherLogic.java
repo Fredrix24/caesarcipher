@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+//import pytest 1234
 
 public class CaesarCipherLogic {
 
@@ -12,6 +13,7 @@ public class CaesarCipherLogic {
         String currentAlphabet = (alphabet.equalsIgnoreCase("ru")) ? russianAlphabet : englishAlphabet;
         String textToProcess = (caseSensitive) ? text : text.toLowerCase();
         int alphabetLength = currentAlphabet.length();
+        int a;
 
         for (char character : textToProcess.toCharArray()) {
             int index = currentAlphabet.indexOf(character);
