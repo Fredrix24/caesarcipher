@@ -1,26 +1,27 @@
+package com.example.caesarcipher;
+
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-//import pytest 1234
 
 public class CaesarCipherLogic {
 
-    private final String russianAlphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
-    private final String englishAlphabet = "abcdefghijklmnopqrstuvwxyz";
+    private final String russianAlphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя."; // 33 буквы
+    private final String englishAlphabet = "abcdefghijklmnopqrstuvwxyz";     // 26 букв
 
     public String encrypt(String text, int shift, String alphabet, boolean caseSensitive) {
         StringBuilder result = new StringBuilder();
         String currentAlphabet = (alphabet.equalsIgnoreCase("ru")) ? russianAlphabet : englishAlphabet;
-        String textToProcess = (caseSensitive) ? text : text.toLowerCase();
         int alphabetLength = currentAlphabet.length();
-        int a;
 
-        for (char character : textToProcess.toCharArray()) {
-            int index = currentAlphabet.indexOf(character);
+        for (char character : text.toCharArray()) {
+            boolean isUpperCase = Character.isUpperCase(character);
+            char lowerChar = Character.toLowerCase(character);
+            int index = currentAlphabet.indexOf(lowerChar);
 
             if (index != -1) {
                 int shiftedIndex = (index + shift % alphabetLength + alphabetLength) % alphabetLength;
-                char shiftedChar = currentAlphabet.charAt(shiftedIndex);
+                char shiftedCharLower = currentAlphabet.charAt(shiftedIndex);
+
+                char shiftedChar = (caseSensitive && isUpperCase) ? Character.toUpperCase(shiftedCharLower) : shiftedCharLower;
                 result.append(shiftedChar);
             } else {
                 result.append(character);
@@ -74,6 +75,9 @@ public class CaesarCipherLogic {
                 hasRussian = true;
             } else if (englishAlphabet.indexOf(c) != -1) {
                 hasEnglish = true;
+            }
+            if (hasRussian && hasEnglish) {
+                break;
             }
         }
 

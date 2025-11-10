@@ -21,10 +21,10 @@
     ```
 3.  Скомпилируйте и запустите:
     ```bash
-    javac Main.java CaesarCipherGUI.java CaesarCipherLogic.java BruteForcer.java
-    java Main
+    javac main.java.com.example.caesarcipher.Main.java main.java.com.example.caesarcipher.CaesarCipherGUI.java main.java.com.example.caesarcipher.CaesarCipherLogic.java main.java.com.example.caesarcipher.BruteForcer.java
+    java main.java.com.example.caesarcipher.Main
     ```
-    Или откройте проект в IntelliJ IDEA, соберите его и запустите `Main.java`.
+    Или откройте проект в IntelliJ IDEA, соберите его и запустите `main.java.com.example.caesarcipher.Main.java`.
 
 ## Использование
 
